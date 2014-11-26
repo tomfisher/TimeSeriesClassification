@@ -26,7 +26,7 @@ public class LocalInfo
 
 
     public static final String[] ucrTiny ={"ItalyPowerDemand", "SonyAIBORobotSurface"};
-    public static final String saveLocation = "C:\\LocalData\\Dropbox\\PhD\\Data\\";
+    public static final String saveLocation = "";//C:/LocalData/Dropbox/PhD/Data/";
 
     /**
      *
@@ -40,7 +40,7 @@ public class LocalInfo
      */
     public static String getSaveLocation(String dataName, Class transform, QualityMeasures.ShapeletQualityChoice qm)
     {
-        return saveLocation + dataName + "\\" + transform.getSimpleName() + "_" + qm;
+        return saveLocation + dataName + File.separator + transform.getSimpleName() + "_" + qm;
     }
 
     /**
@@ -105,7 +105,7 @@ public class LocalInfo
         FileWriter out = null;
         try
         {
-            File file = new File(saveLocation+dataName+"\\"+ dataName+"_results.csv");
+            File file = new File(saveLocation+dataName+File.separator+ dataName+"_results.csv");
             file.getParentFile().mkdirs();
             out = new FileWriter(file);
             out.append("Classifier_QualityMeasure,Accuracy,\n");

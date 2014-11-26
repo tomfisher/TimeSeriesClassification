@@ -44,20 +44,20 @@ public class ClassifierTools {
  */
 	public static Instances loadData(String fullPath)
 	{
-		Instances d=null;
-		FileReader r;
-		int nosAtts;
-		try{		
-			r= new FileReader(fullPath+".arff"); 
-			d = new Instances(r); 
-			d.setClassIndex(d.numAttributes()-1);
-		}
-		catch(Exception e)
-		{
-			System.out.println("Unable to load data on path "+fullPath+" Exception thrown ="+e);
-			System.exit(0);
-		}
-		return d;
+            Instances d=null;
+            FileReader r;
+            int nosAtts;
+            try{		
+                    r= new FileReader(fullPath+".arff"); 
+                    d = new Instances(r); 
+                    d.setClassIndex(d.numAttributes()-1);
+            }
+            catch(Exception e)
+            {
+                    System.out.println("Unable to load data on path "+fullPath+" Exception thrown ="+e);
+                    System.exit(0);
+            }
+            return d;
 	}
 
 /**

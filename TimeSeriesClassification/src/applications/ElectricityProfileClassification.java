@@ -852,7 +852,7 @@ public class ElectricityProfileClassification {
     }
 
     public static Classifier[] setSingleClassifiers(ArrayList<String> names) {
-        ArrayList<Classifier> sc2 = new ArrayList<>();
+        ArrayList<Classifier> sc2 = new ArrayList<Classifier>();
         sc2.add(new IBk(1));
         names.add("NN");
         Classifier c;

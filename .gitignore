@@ -44,3 +44,5 @@ Temporary Items
 
 #ignore build directories.
 [Bb]uild/
+#ignore datasets
+75 Data sets for Elastic Ensemble DAMI Paper/

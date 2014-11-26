@@ -6,6 +6,7 @@
 package AaronTest;
 
 import development.TimeSeriesClassification;
+import java.io.File;
 import java.util.HashMap;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
@@ -37,8 +38,8 @@ public class ShapeletTransformExperiments
     };
 
     static QualityMeasures.ShapeletQualityChoice[] qualityMeasures =
-    {
-        F_STAT, INFORMATION_GAIN, KRUSKALL_WALLIS, MOODS_MEDIAN
+    { 
+       F_STAT, INFORMATION_GAIN, KRUSKALL_WALLIS, MOODS_MEDIAN
     };
     
 
@@ -52,19 +53,8 @@ public class ShapeletTransformExperiments
         s.setQualityMeasure(qm);
         s.turnOffLog();
     }
-    
-    public static void initializeShapelet2(FullShapeletTransform2 s, Instances data, QualityMeasures.ShapeletQualityChoice qm)
-    {
-        //transform from 3- n, where n is the max length of the series.
-        s.setNumberOfShapelets(1);
-        int minLength = 3;
-        int maxLength = data.numAttributes() - 1;
-        s.setShapeletMinAndMax(minLength, maxLength);
-        s.setQualityMeasure(qm);
-        s.turnOffLog();
-    }
 
-    public static Instances[] extractShapelet(String dataName, Class shapeletClass, QualityMeasures.ShapeletQualityChoice qm)
+    public static Instances[] extractShapelet(File dataName, Class shapeletClass, QualityMeasures.ShapeletQualityChoice qm)
     {
         Instances test = null;
         Instances train;
@@ -72,14 +62,15 @@ public class ShapeletTransformExperiments
         
         Instances[] testAndTrain = new Instances[2];
 
-        String filePath = TimeSeriesClassification.path + dataName + "\\" + dataName;
-
+        String filePath = dataName.toString() + File.separator + dataName.getName();
+        System.out.println("FilePath: " + filePath);
+        
         //get the train and test instances for each dataset.
         test = utilities.ClassifierTools.loadData(filePath + "_TEST");
         train = utilities.ClassifierTools.loadData(filePath + "_TRAIN");
 
         //get the save location from the static utility class for my local save.
-        String outLogFileName = LocalInfo.getSaveLocation(dataName, shapeletClass, qm);
+        String outLogFileName = LocalInfo.getSaveLocation(dataName.getName(), shapeletClass, qm);
 
         try
         {
@@ -149,7 +140,7 @@ public class ShapeletTransformExperiments
     }
 
 
-    public static void CreateData(String dataName, Instances[][][] dataSets)
+    public static void CreateData(File dataName, Instances[][][] dataSets)
     {
         //for each classifier pass in the class name and construct it generically in the sub function.
         for (int i = 0; i < classList.length; i++)
@@ -195,7 +186,7 @@ public class ShapeletTransformExperiments
         LocalInfo.saveHashMap(results, dataName);
     }
     
-    public static void testDataSet(String dataName, boolean create)
+    public static void testDataSet(File dataName, boolean create)
     {
         //[transformType][qualityMeasure][TRAIN/TEST]
         Instances[][][] dataSets = new Instances[classList.length][qualityMeasures.length][2];
@@ -207,17 +198,34 @@ public class ShapeletTransformExperiments
         }
         else
         {
-            LocalInfo.LoadData(dataName,dataSets, classList, qualityMeasures);
+            LocalInfo.LoadData(dataName.getName(),dataSets, classList, qualityMeasures);
         }
         
-        trainAndTest(dataName, dataSets);
-        
-        //check whether the datasets are equal. Basic value check at each attribute. if the shapelets the same, the datasets should be identical.
-        //AnalyseDatasets(dataSets, classList, qualityMeasures);
+        trainAndTest(dataName.getName(), dataSets);
     }
 
     public static void main(String[] args)
     {
+        
+        String dir = "75 Data sets for Elastic Ensemble DAMI Paper";
+        
+        File fDir = new File(dir);
+
+        for (final File ds : fDir.listFiles())
+        {
+            //if it's not a directory we're not interested.
+            if(!ds.isDirectory()) continue;
+            
+            new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    testDataSet(ds, true);
+                }
+            }.start();
+        }
+        
         
         //for (String dataSet : LocalInfo.ucrTiny/*development.DataSets.ucrSmall*/)
         //{
@@ -225,7 +233,7 @@ public class ShapeletTransformExperiments
         //}
 
         
-        Instances[] shapelet1, shapelet2;
+        /*Instances[] shapelet1, shapelet2;
         String dataSet = LocalInfo.ucrTiny[1];
         QualityMeasures.ShapeletQualityChoice qm = F_STAT;
         
@@ -243,7 +251,7 @@ public class ShapeletTransformExperiments
         {
             int answer = tf1.getShapelets().get(i).compareTo(tf2.getShapelets().get(i));
             System.out.println("answer: " + answer);
-        }
+        }*/
     }
 
 
@@ -254,7 +262,7 @@ public class ShapeletTransformExperiments
 
         Instances[] testAndTrain = new Instances[2];
 
-        String filePath = TimeSeriesClassification.path + dataName + "\\" + dataName;
+        String filePath = TimeSeriesClassification.path + dataName + File.separator + dataName;
 
         //get the train and test instances for each dataset.
         test = utilities.ClassifierTools.loadData(filePath + "_TEST");
